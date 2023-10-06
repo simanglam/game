@@ -6,6 +6,7 @@ class game:
     
     def __init__(self):
         pygame.init()
+        pygame.key.set_repeat(1, 1)
         self.screen = pygame.display.set_mode((1080, 1080))
         self.width, self.height = self.screen.get_size()
 
