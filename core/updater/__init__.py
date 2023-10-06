@@ -14,7 +14,7 @@ class Updater:
         for event in event_list:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    self.charater_status[self.main_charater]['y_speed'] -= 100
+                    self.charater_status[self.main_charater]['y_speed'] -= 10
                     self.charater_status[self.main_charater]['y'] = 549
 
         self.charater_status[self.main_charater]['y_speed'] -= -9.8
