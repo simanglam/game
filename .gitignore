@@ -1,0 +1,5 @@
+*.log
+*.pdf
+*.aux
+*.tex
+core/__pycache__
