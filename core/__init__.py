@@ -19,7 +19,10 @@ class game:
 
 
     def render(self):
-        self.updater.update(pygame.event.get())
+        if len(pygame.event.get(pygame.QUIT)):
+            self.running = False
+            return
+        self.updater.update(pygame.event.get(eventtype=pygame.KEYDOWN))
         self.screen.fill((255, 255, 255))
         for k, v in self.updater.get_information().items():
             self.screen.blit(k.surface, (v["x"], v["y"]))
