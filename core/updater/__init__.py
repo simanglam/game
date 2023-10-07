@@ -33,11 +33,12 @@ class Updater:
 
                 if event.key == pygame.K_LEFT:
                     self.charater_status[self.main_charater]['x_speed'] -= 20 * ((20 + self.charater_status[self.main_charater]['x_speed'])/ 80)
-            else:
-                if self.charater_status[self.main_charater]['x_speed'] > 0:
-                    self.charater_status[self.main_charater]['x_speed'] -= 20 * ((20 + self.charater_status[self.main_charater]['x_speed'])/ 20)
-                elif self.charater_status[self.main_charater]['x_speed'] < 0:
-                    self.charater_status[self.main_charater]['x_speed'] += 20 * ((20 - self.charater_status[self.main_charater]['x_speed'])/ 20)
+                
+        if not self.charater_status[self.main_charater]["air"]:
+            if self.charater_status[self.main_charater]['x_speed'] > 0:
+                self.charater_status[self.main_charater]['x_speed'] -= 3 if self.charater_status[self.main_charater]['x_speed'] >= 3 else self.charater_status[self.main_charater]['x_speed']
+            elif self.charater_status[self.main_charater]['x_speed'] < 0:
+                self.charater_status[self.main_charater]['x_speed'] += 3  if self.charater_status[self.main_charater]['x_speed'] <= -3 else -self.charater_status[self.main_charater]['x_speed']
 
         self.charater_status[self.main_charater]['y_speed'] += 9.8
         self.charater_status[self.main_charater]['y'] += self.charater_status[self.main_charater]['y_speed']
