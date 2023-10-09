@@ -1,56 +1,70 @@
 import pygame
 
+from ..player import Charater
 
 class Updater:
     
     def __init__(self) -> None:
         self.charater_status = {}
 
-    def register_charater(self, charater):
-        self.main_charater = charater
-        self.charater_status[self.main_charater] = {
-            "x" : 500, 
-            "y" : 500, 
-            "x_speed" : 0, 
-            "y_speed" : 0, 
-            "air" : False
-            }
+    def register_charater(self, charater: Charater):
+        self.main_charater: Charater = charater
 
-    def update(self, event_list: list[pygame.event.Event]):
-        for event in event_list:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    if not self.charater_status[self.main_charater]["air"]:
-                        self.charater_status[self.main_charater]["air"] = True
-                        self.charater_status[self.main_charater]['y_speed'] -= 100
-                        self.charater_status[self.main_charater]['y'] = 549
+    def register_camara(self, camara: Charater):
+        self.camara: Charater = camara
 
-                if event.key == pygame.K_DOWN:
-                    self.charater_status[self.main_charater]['y_speed'] += 2
+    def register_map(self, map):
+        self.map = map
 
-                if event.key == pygame.K_RIGHT:
-                    self.charater_status[self.main_charater]['x_speed'] +=  20 * ((20 - self.charater_status[self.main_charater]['x_speed'])/ 80)
+    def update(self, event_list: dict[str : bool], collusion_list):
+        self.camara.update(self.main_charater.physical_variable['x_speed'], self.main_charater.physical_variable['y_speed'])
+        self.main_charater.rect.bottom += self.main_charater.physical_variable['y_speed']
+        self.main_charater.rect.x += self.main_charater.physical_variable['x_speed']
+        # self.map.update(x = self.main_charater.physical_variable['x_speed'], y = self.main_charater.physical_variable['y_speed'])
+        if self.main_charater.rect.bottom > 800:
+            self.main_charater.physical_variable["air"] = False
+            self.main_charater.rect.bottom = 800
+            self.main_charater.physical_variable['y_speed'] = 0
 
-                if event.key == pygame.K_LEFT:
-                    self.charater_status[self.main_charater]['x_speed'] -= 20 * ((20 + self.charater_status[self.main_charater]['x_speed'])/ 80)
-                
-        if not self.charater_status[self.main_charater]["air"]:
-            if self.charater_status[self.main_charater]['x_speed'] > 0:
-                self.charater_status[self.main_charater]['x_speed'] -= 3 if self.charater_status[self.main_charater]['x_speed'] >= 3 else self.charater_status[self.main_charater]['x_speed']
-            elif self.charater_status[self.main_charater]['x_speed'] < 0:
-                self.charater_status[self.main_charater]['x_speed'] += 3  if self.charater_status[self.main_charater]['x_speed'] <= -3 else -self.charater_status[self.main_charater]['x_speed']
+        self.collusion_update(collusion_list, event_list)
+        self.physical_update(event_list)
 
-        self.charater_status[self.main_charater]['y_speed'] += 9.8
-        self.charater_status[self.main_charater]['y'] += self.charater_status[self.main_charater]['y_speed']
-        self.charater_status[self.main_charater]['x'] += self.charater_status[self.main_charater]['x_speed']
+    def physical_update(self, event_list: dict):
+
+        if self.main_charater.physical_variable["air"]:
+            self.main_charater.physical_variable['y_speed'] += 10 if self.main_charater.physical_variable['y_speed'] < 15 else 0
+
+        for k, v in event_list.items():
+
+            match(k):
+                case("w"):
+                    if v:
+                        if not self.main_charater.physical_variable["air"]:
+                            self.main_charater.physical_variable["air"] = True
+                            self.main_charater.physical_variable['y_speed'] -= 60
+                            self.main_charater.rect.y -= 10
+                case("s"):
+                        if v:
+                            self.main_charater.physical_variable['y_speed'] += 2
+                case("d"):
+                    if v:
+                        self.main_charater.physical_variable['x_speed'] +=  20 * ((20 - self.main_charater.physical_variable['x_speed'])/ 20)
+                case("a"):
+                    if v:
+                        self.main_charater.physical_variable['x_speed'] -= 20 * ((20 + self.main_charater.physical_variable['x_speed'])/ 20)
+
+        if not event_list["a"] and not event_list["d"]:
+            if self.main_charater.physical_variable['x_speed'] > 0:
+                self.main_charater.physical_variable['x_speed'] -= 3 if self.main_charater.physical_variable['x_speed'] >= 3 else self.main_charater.physical_variable['x_speed']
+            elif self.main_charater.physical_variable['x_speed'] < 0: 
+                self.main_charater.physical_variable['x_speed'] += 3 if self.main_charater.physical_variable['x_speed'] <= 3 else self.main_charater.physical_variable['x_speed']
         
-        if self.charater_status[self.main_charater]['y'] >= 550:
-            self.charater_status[self.main_charater]["air"] = False
-            self.charater_status[self.main_charater]['y'] = 550
-            self.charater_status[self.main_charater]['y_speed'] = 0
 
+    def collusion_update(self, collusion_list: pygame.sprite.Group, event_list: dict[str, bool]):
+        col = pygame.sprite.spritecollide(self.main_charater, collusion_list, False)
+        if len(col):
+            for i in col:
+                i.on_top(self.main_charater)
+        else:
+            self.main_charater.physical_variable['air'] = True
 
-
-    def get_information(self):
-        return self.charater_status
-    
