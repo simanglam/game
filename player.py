@@ -16,8 +16,11 @@ class PlayerCharater(Charater):
         super().__init__(size, color)
         self.health = 10
 
-        self.abs_speed = 0
-        self.relative_speed = 0
+        self.abs_xspeed = 0
+        self.relative_xspeed = 0
+
+        self.abs_yspeed = 0
+        self.relative_yspeed = 0
 
         self.rect = self.image.get_rect()
         self.rect.x = 500
@@ -26,7 +29,7 @@ class PlayerCharater(Charater):
 
         self.action = {"w" : False, "a" : False, "s" : False, "d" : False}
         
-        self.direction = pygame.math.Vector2(0, 0)
+        self.direction = pygame.math.Vector2(0, 1)
 
         self.physical_constant = {}
 
@@ -40,8 +43,12 @@ class PlayerCharater(Charater):
                 self.action[k] = True
 
     def apply_gravity(self, gravity):
-        if self.air:
-            self.direction.y += gravity if self.direction.y < 2*gravity else 0
+        if self.direction.y < 0:
+            self.abs_yspeed -= gravity if self.abs_yspeed > gravity else self.abs_yspeed
+            
+        elif self.direction.y > 0:
+            self.abs_yspeed += gravity if self.abs_yspeed < gravity else 0
+
 
     def update(self) -> None:
         self.get_input()
@@ -52,12 +59,13 @@ class PlayerCharater(Charater):
             match(k):
                 case("w"):
                     if v:
-                        if not self.air:
-                            self.air = True
-                            self.direction.y -= 75
+                        if self.direction.y == 0:
+                            self.direction.y = -1
+                            self.abs_yspeed = 75
                 case("s"):
                         if v:
-                            self.direction.y += 2
+                            self.direction.y = 1
+                            self.abs_yspeed = 2
                 case("d"):
                     if v:
                         self.direction.x = 1
@@ -66,9 +74,12 @@ class PlayerCharater(Charater):
                         self.direction.x = -1
 
         if not event_list["a"] and not event_list["d"]:
-            self.abs_speed -= 2 if self.abs_speed >= 2 else self.abs_speed
-            if self.abs_speed == 0:
+            self.abs_xspeed -= 2 if self.abs_xspeed >= 2 else self.abs_xspeed
+            if self.abs_xspeed == 0:
                 self.direction.x = 0
         else:
-            self.abs_speed += 20 * ((20 - self.abs_speed) / 20)
+            self.abs_xspeed += 10 * ((10 - self.abs_xspeed) / 10)
+        if self.abs_yspeed == 0:
+                self.direction.y = 1
+
         

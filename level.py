@@ -6,37 +6,57 @@ from gameobject import BaseMapObject
 
 class Level:
 
-    def __init__(self) -> None:
-        self.screen = pygame.surface.Surface((1080, 1080))
+    def __init__(self, width, height) -> None:
+        self.screen = pygame.surface.Surface((width, height))
 
         self.map = JsonMapDecoder()
         self.main_charater = PlayerCharater((20, 20), (0, 0, 0))
         self.terrian_group = pygame.sprite.Group()
         self.map.render(self)
-        self.world_shift = 0
+        self.world_xshift = 0
+        self.world_yshift = 0
         self.running = True   
 
     def scroll_x(self):
         charater = self.main_charater
-        charater.relative_speed = charater.abs_speed
+        charater.relative_xspeed = charater.abs_xspeed
 
         if charater.direction.x < 0 and charater.rect.x < 200:
-            self.world_shift = charater.abs_speed
-            charater.relative_speed = 0
+            self.world_xshift = charater.abs_xspeed
+            charater.relative_xspeed = 0
     
         elif charater.direction.x > 0 and charater.rect.x > 800:
-            self.world_shift = -charater.abs_speed
-            charater.relative_speed = 0
+            self.world_xshift = -charater.abs_xspeed
+            charater.relative_xspeed = 0
 
         else:
-            self.world_shift = 0
+            self.world_xshift = 0
 
 
-        self.terrian_group.update(self.world_shift)
+        self.terrian_group.update(x = self.world_xshift, y = 0)
+
+    def scroll_y(self):
+        charater = self.main_charater
+        charater.relative_yspeed = charater.abs_yspeed
+
+        if charater.direction.y < 0 and charater.rect.y < 200:
+            self.world_yshift = charater.abs_yspeed
+            charater.relative_yspeed = 0
+    
+        elif charater.direction.y > 0 and charater.rect.y > 800:
+            self.world_yshift = -charater.abs_yspeed
+            charater.relative_yspeed = 0
+
+        else:
+            self.world_yshift = 0
+
+
+        self.terrian_group.update(x = 0, y = self.world_yshift)
+
 
     def horizon_collide(self):
         charater = self.main_charater
-        charater.rect.x += charater.direction.x * charater.relative_speed
+        charater.rect.x += charater.direction.x * charater.relative_xspeed
         
         for sprite in self.terrian_group.sprites():
             if sprite.rect.colliderect(charater.rect):
@@ -44,21 +64,32 @@ class Level:
 
     def vertical_collide(self):
         charater = self.main_charater
-        charater.rect.y += charater.direction.y
-        charater.air = True
+        charater.rect.y += charater.direction.y * charater.relative_yspeed
         charater.apply_gravity(9.8)
-
+        colide = False
         for sprite in self.terrian_group.sprites():
             if sprite.rect.colliderect(charater.rect):
                 if charater.direction.y > 0:
                     sprite.on_top(charater)
+                    colide = True
+                elif charater.direction.y < 0:
+                    sprite.under(charater)
+        if not colide and charater.direction.y == 0:
+            charater.direction.y = 1
 
     def update(self):
+        key = pygame.key.get_pressed()
+        
+        if key[pygame.key.key_code("escape")]:
+            pygame.quit()
+            exit()
+
         charater = self.main_charater
         charater.update()
         self.scroll_x()
-        self.horizon_collide()
+        self.scroll_y()
         self.vertical_collide()
+        self.horizon_collide()
 
         self.render()
 

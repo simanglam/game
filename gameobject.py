@@ -12,13 +12,16 @@ class BaseMapObject(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
-    def update(self, shift):
-        self.rect.x += shift
+    def update(self, x, y):
+        self.rect.x += x
+        self.rect.y += y
 
     def on_top(self, object):
-        object.air = False
         object.direction.y = 0
         object.rect.bottom = self.rect.top
+
+    def under(self, object):
+        object.rect.top = self.rect.bottom
 
     def on_side(self, object):
         if object.direction.x > 0:
