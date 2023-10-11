@@ -21,7 +21,7 @@ class Game:
             self.surface.blit(self.scene.screen, (0, 0))
             self.surface.blit(self.info.render(str(self.clock.get_fps()), 1, (0, 0, 0)), (0, 0))
             pygame.display.update()
-            self.clock.tick(60)
+            self.clock.tick(30)
 
 
 

@@ -61,7 +61,7 @@ class PlayerCharater(Charater):
                     if v:
                         if self.direction.y == 0:
                             self.direction.y = -1
-                            self.abs_yspeed = 75
+                            self.abs_yspeed = 60
                 case("s"):
                         if v:
                             self.direction.y = 1

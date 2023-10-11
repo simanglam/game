@@ -9,6 +9,8 @@ class BaseMapObject(pygame.sprite.Sprite):
 
         self.image.fill((0, 0, 0))
 
+        self.image = pygame.image.load("./resource/map/grass/1.png")
+
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
@@ -26,8 +28,8 @@ class BaseMapObject(pygame.sprite.Sprite):
     def on_side(self, object):
         if object.direction.x > 0:
             object.rect.right = self.rect.left
-        else:
+        elif object.direction.x < 0:
             object.rect.left = self.rect.right
 
-        object.direction.x = 0
-        object.abs_speed = 0
+        #object.direction.x = 0
+        #object.abs_xspeed = 0

@@ -10,7 +10,7 @@ class Level:
         self.screen = pygame.surface.Surface((width, height))
 
         self.map = JsonMapDecoder()
-        self.main_charater = PlayerCharater((20, 20), (0, 0, 0))
+        self.main_charater = PlayerCharater((30, 30), (0, 0, 0))
         self.terrian_group = pygame.sprite.Group()
         self.map.render(self)
         self.world_xshift = 0
@@ -34,17 +34,20 @@ class Level:
 
 
         self.terrian_group.update(x = self.world_xshift, y = 0)
+        self.horizon_collide()
 
     def scroll_y(self):
         charater = self.main_charater
         charater.relative_yspeed = charater.abs_yspeed
 
-        if charater.direction.y < 0 and charater.rect.y < 200:
+
+        if charater.direction.y < 0 and charater.rect.top < 100:
             self.world_yshift = charater.abs_yspeed
             charater.relative_yspeed = 0
     
-        elif charater.direction.y > 0 and charater.rect.y > 800:
+        elif charater.direction.y > 0 and charater.rect.bottom >= 700:
             self.world_yshift = -charater.abs_yspeed
+            charater.rect.bottom = 700
             charater.relative_yspeed = 0
 
         else:
@@ -52,29 +55,34 @@ class Level:
 
 
         self.terrian_group.update(x = 0, y = self.world_yshift)
+        self.vertical_collide()
 
 
     def horizon_collide(self):
         charater = self.main_charater
         charater.rect.x += charater.direction.x * charater.relative_xspeed
-        
         for sprite in self.terrian_group.sprites():
             if sprite.rect.colliderect(charater.rect):
                 sprite.on_side(charater)
+                break
+                
 
     def vertical_collide(self):
+        self.colide = False
+        
         charater = self.main_charater
-        charater.rect.y += charater.direction.y * charater.relative_yspeed
         charater.apply_gravity(9.8)
-        colide = False
+        charater.rect.y += charater.direction.y * charater.relative_yspeed
+
         for sprite in self.terrian_group.sprites():
             if sprite.rect.colliderect(charater.rect):
-                if charater.direction.y > 0:
+                if charater.direction.y >= 0:
                     sprite.on_top(charater)
-                    colide = True
+                    self.colide = True
+                    break
                 elif charater.direction.y < 0:
                     sprite.under(charater)
-        if not colide and charater.direction.y == 0:
+        if not self.colide and charater.direction.y == 0:
             charater.direction.y = 1
 
     def update(self):
@@ -88,9 +96,8 @@ class Level:
         charater.update()
         self.scroll_x()
         self.scroll_y()
-        self.vertical_collide()
-        self.horizon_collide()
-
+        #self.horizon_collide()
+        #self.vertical_collide()
         self.render()
 
     def render(self):
