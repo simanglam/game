@@ -1,4 +1,4 @@
 *.log
 *.aux
-/__pycache__
-__pycache
+*/__pycache__/*
+__pycache__

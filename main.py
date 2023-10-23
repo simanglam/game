@@ -2,7 +2,7 @@ import json
 from typing import Any
 import pygame
 
-from level import Level
+from scene.menu import MenuScene
 
 class Game:
 
@@ -10,7 +10,7 @@ class Game:
         self.surface = pygame.display.set_mode((1080, 1080), pygame.FULLSCREEN | pygame.HWSURFACE, vsync=2)
         self.width, self.height = self.surface.get_size()
         pygame.init()
-        self.scene = Level(self.width, self.height)
+        self.scene = MenuScene(self, self.width, self.height)
         self.running = True
         self.clock = pygame.time.Clock()
         self.info = pygame.font.Font("Hannotate.ttc", 40)

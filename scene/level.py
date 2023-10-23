@@ -1,14 +1,16 @@
 import pygame
 import json
 
+from .base import abs_scene
 from player import PlayerCharater
 from gameobject import BaseMapObject
 
-class Level:
+class Level():
 
-    def __init__(self, width, height) -> None:
+    def __init__(self, game, width, height) -> None:
         self.screen = pygame.surface.Surface((width, height))
 
+        self.game = game
         self.map = JsonMapDecoder()
         self.main_charater = PlayerCharater((30, 30), (0, 0, 0))
         self.terrian_group = pygame.sprite.Group()
