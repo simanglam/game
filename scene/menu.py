@@ -12,7 +12,12 @@ class MenuScene(abs_scene):
         self.screen.fill('white')
         self.screen.blit(self.button.image, self.button.rect)
 
+        key = pygame.key.get_pressed()
+        
+        if key[pygame.key.key_code("escape")]:
+            pygame.quit()
+            exit()
+
         for event in pygame.event.get(pygame.MOUSEBUTTONDOWN):
             if self.button.rect.collidepoint(event.dict['pos']):
                 self.exit(Level)
-        pass

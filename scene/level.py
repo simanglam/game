@@ -1,5 +1,6 @@
 import pygame
 import json
+import os
 
 from .base import abs_scene
 from player import PlayerCharater
@@ -23,41 +24,35 @@ class Level():
         charater = self.main_charater
         charater.relative_xspeed = charater.abs_xspeed
 
-        if charater.direction.x < 0 and charater.rect.x < 200:
+        if charater.direction.x < 0 and charater.rect.x < self.screen.get_width() / 4:
             self.world_xshift = charater.abs_xspeed
             charater.relative_xspeed = 0
     
-        elif charater.direction.x > 0 and charater.rect.x > 800:
+        elif charater.direction.x > 0 and charater.rect.x > self.screen.get_width() * 3 / 4:
             self.world_xshift = -charater.abs_xspeed
             charater.relative_xspeed = 0
 
         else:
             self.world_xshift = 0
 
-
         self.terrian_group.update(x = self.world_xshift, y = 0)
-        self.horizon_collide()
 
     def scroll_y(self):
         charater = self.main_charater
         charater.relative_yspeed = charater.abs_yspeed
 
-
-        if charater.direction.y < 0 and charater.rect.top < 100:
+        if charater.direction.y < 0 and charater.rect.top < self.screen.get_height() / 4:
             self.world_yshift = charater.abs_yspeed
             charater.relative_yspeed = 0
     
-        elif charater.direction.y > 0 and charater.rect.bottom >= 700:
+        elif charater.direction.y > 0 and charater.rect.bottom > self.screen.get_height() * 3 / 4:
             self.world_yshift = -charater.abs_yspeed
-            charater.rect.bottom = 700
             charater.relative_yspeed = 0
 
         else:
             self.world_yshift = 0
 
-
         self.terrian_group.update(x = 0, y = self.world_yshift)
-        self.vertical_collide()
 
 
     def horizon_collide(self):
@@ -68,7 +63,6 @@ class Level():
                 sprite.on_side(charater)
                 break
                 
-
     def vertical_collide(self):
         self.colide = False
         
@@ -97,9 +91,9 @@ class Level():
         charater = self.main_charater
         charater.update()
         self.scroll_x()
+        self.horizon_collide()
         self.scroll_y()
-        #self.horizon_collide()
-        #self.vertical_collide()
+        self.vertical_collide()
         self.render()
 
     def render(self):
@@ -109,7 +103,6 @@ class Level():
 
         self.screen.fill((255, 255, 255))
         self.terrian_group.draw(self.screen)
-        #self.main_charater.draw(self.screen)
         self.screen.blit(self.main_charater.image, self.main_charater.rect)
 
     
@@ -124,7 +117,7 @@ class JsonMapDecoder:
 
         self.mapdata = None
 
-        self.decode("./mapdata/level1.json")
+        self.decode(os.path.join(".", "mapdata", "level1.json"))
 
     def decode(self, file: str):
         with open(file, "r") as map_file:
@@ -134,4 +127,3 @@ class JsonMapDecoder:
         for data in self.mapdata["mapdata"]:
             new_terrian = BaseMapObject((data["x"], data["y"]))
             game.terrian_group.add(new_terrian)
-

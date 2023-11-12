@@ -1,3 +1,4 @@
+import os
 import pygame
 
 class BaseMapObject(pygame.sprite.Sprite):
@@ -9,7 +10,7 @@ class BaseMapObject(pygame.sprite.Sprite):
 
         self.image.fill((0, 0, 0))
 
-        self.image = pygame.image.load("./resource/map/grass/1.png")
+        self.image = pygame.image.load(os.path.join(".", "resource", "map", "grass", "1.png"))
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
