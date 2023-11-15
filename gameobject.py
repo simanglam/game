@@ -3,14 +3,13 @@ import pygame
 
 class BaseMapObject(pygame.sprite.Sprite):
 
-    def __init__(self, position: tuple, image = None) -> None:
+    def __init__(self, position: tuple, path = os.path.join(".", "resource", "map", "grass", "1.png")) -> None:
         pygame.sprite.Sprite.__init__(self)
 
         self.image = pygame.surface.Surface((50, 50))
 
         self.image.fill((0, 0, 0))
-
-        self.image = pygame.image.load(os.path.join(".", "resource", "map", "grass", "1.png"))
+        self.image = pygame.image.load(path)
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
