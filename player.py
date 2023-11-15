@@ -34,11 +34,9 @@ class PlayerCharater(Charater):
         self.physical_constant = {}
 
     def get_input(self):
+        key = pygame.key.get_pressed()
         for k in self.action.keys():
             self.action[k] = False
-        key = pygame.key.get_pressed()
-        
-        for k in self.action.keys():
             if key[pygame.key.key_code(k)]:
                 self.action[k] = True
 
