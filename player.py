@@ -77,6 +77,6 @@ class PlayerCharater(Charater):
         else:
             self.abs_xspeed += 15 * ((15 - self.abs_xspeed) / 15)
         if self.abs_yspeed == 0:
-                self.direction.y = 1
+            self.direction.y = 1
 
         
